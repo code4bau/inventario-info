@@ -456,8 +456,13 @@ const renderAdmin = () => {
         </div>
         
         <div class="block">
+            <a href="/api/report" target="_blank" class="button button-fill color-blue" style="margin-bottom:1rem">
+                <i class="icon f7-icons" style="font-size:18px; margin-right:8px">cloud_download</i> 
+                Descargar Reporte PDF
+            </a>
             <button class="button button-fill color-red" onclick="logout()">Cerrar Sesión</button>
         </div>
+
     `);
 
     // Listeners

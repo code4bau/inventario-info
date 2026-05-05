@@ -7,6 +7,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import os
+from fpdf import FPDF
+from fastapi import Response
+
 
 app = FastAPI()
 
@@ -225,6 +228,65 @@ def seed_data():
     conn.commit()
     conn.close()
     return {"status": "seeded"}
+
+@app.get("/api/report")
+def generate_report():
+    conn = get_db()
+    cursor = conn.cursor()
+    
+    # Obtener datos
+    cursor.execute("SELECT id, nombre, codigo_patrimonial, categoria FROM items")
+    items = [dict(row) for row in cursor.fetchall()]
+    
+    cursor.execute("SELECT item_id, type FROM transactions")
+    txs = cursor.fetchall()
+    
+    # Calcular stock
+    inventory = {str(i["id"]): {**i, "stock": 0} for i in items}
+    for tx in txs:
+        item_id = str(tx["item_id"])
+        if item_id in inventory:
+            inventory[item_id]["stock"] += (1 if tx["type"] == "ENTRADA" else -1)
+            
+    conn.close()
+
+    # Generar PDF
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "Reporte de Inventario Informatica - FOLP", ln=True, align="C")
+    pdf.set_font("Helvetica", "", 10)
+    pdf.cell(0, 10, f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M')}", ln=True, align="C")
+    pdf.ln(10)
+    
+    # Encabezados de tabla
+    pdf.set_fill_color(28, 112, 91) # Nuestro verde
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.cell(80, 10, " Item / Activo", border=1, fill=True)
+    pdf.cell(40, 10, " Codigo", border=1, fill=True)
+    pdf.cell(40, 10, " Categoria", border=1, fill=True)
+    pdf.cell(30, 10, " Stock", border=1, fill=True, align="C")
+    pdf.ln()
+    
+    # Filas
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Helvetica", "", 9)
+    for i in inventory.values():
+        pdf.cell(80, 8, f" {i['nombre']}", border=1)
+        pdf.cell(40, 8, f" {i['codigo_patrimonial']}", border=1)
+        pdf.cell(40, 8, f" {i['categoria']}", border=1)
+        pdf.cell(30, 8, f" {i['stock']}", border=1, align="C")
+        pdf.ln()
+    
+    pdf_bytes = pdf.output()
+    
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=reporte_inventario.pdf"}
+    )
+
 
 
 # Servir archivos estáticos del frontend
