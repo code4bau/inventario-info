@@ -253,33 +253,39 @@ def generate_report():
     # Generar PDF
     pdf = FPDF()
     pdf.add_page()
+    
+    # Función para limpiar texto para PDF estándar
+    def clean(txt):
+        return str(txt).encode('latin-1', 'replace').decode('latin-1')
+
     pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, "Reporte de Inventario Informatica - FOLP", ln=True, align="C")
+    pdf.cell(0, 10, clean("Reporte de Inventario Informática - FOLP"), ln=True, align="C")
     pdf.set_font("Helvetica", "", 10)
-    pdf.cell(0, 10, f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M')}", ln=True, align="C")
+    pdf.cell(0, 10, clean(f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M')}"), ln=True, align="C")
     pdf.ln(10)
     
     # Encabezados de tabla
     pdf.set_fill_color(28, 112, 91) # Nuestro verde
     pdf.set_text_color(255, 255, 255)
     pdf.set_font("Helvetica", "B", 10)
-    pdf.cell(80, 10, " Item / Activo", border=1, fill=True)
-    pdf.cell(40, 10, " Codigo", border=1, fill=True)
-    pdf.cell(40, 10, " Categoria", border=1, fill=True)
-    pdf.cell(30, 10, " Stock", border=1, fill=True, align="C")
+    pdf.cell(80, 10, clean(" Item / Activo"), border=1, fill=True)
+    pdf.cell(40, 10, clean(" Código"), border=1, fill=True)
+    pdf.cell(40, 10, clean(" Categoría"), border=1, fill=True)
+    pdf.cell(30, 10, clean(" Stock"), border=1, fill=True, align="C")
     pdf.ln()
     
     # Filas
     pdf.set_text_color(0, 0, 0)
     pdf.set_font("Helvetica", "", 9)
     for i in inventory.values():
-        pdf.cell(80, 8, f" {i['nombre']}", border=1)
-        pdf.cell(40, 8, f" {i['codigo_patrimonial']}", border=1)
-        pdf.cell(40, 8, f" {i['categoria']}", border=1)
-        pdf.cell(30, 8, f" {i['stock']}", border=1, align="C")
+        pdf.cell(80, 8, clean(f" {i['nombre']}"), border=1)
+        pdf.cell(40, 8, clean(f" {i['codigo_patrimonial']}"), border=1)
+        pdf.cell(40, 8, clean(f" {i['categoria']}"), border=1)
+        pdf.cell(30, 8, clean(f" {i['stock']}"), border=1, align="C")
         pdf.ln()
     
     pdf_bytes = pdf.output()
+
     
     return Response(
         content=pdf_bytes,
