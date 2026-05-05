@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1c705b">
+    
+    <title>Inventario Informatica</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    
+    <!-- Framework7 Styles -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7@8/framework7-bundle.min.css">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/framework7-icons@5/css/framework7-icons.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Main View -->
+        <div class="view view-main view-init safe-areas" data-url="/">
+            <div class="page" data-name="home">
+                <!-- Top Navbar -->
+                <div class="navbar">
+                    <div class="navbar-bg" style="background: #1c705b"></div>
+                    <div class="navbar-inner">
+                        <div class="title" style="color:white">Inventario Informatica</div>
+                        <div class="right">
+                            <a href="#" class="link icon-only color-white" id="seed-btn-container"></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Toolbar (Tabs) -->
+                <div class="toolbar toolbar-bottom tabbar-labels">
+                    <div class="toolbar-inner">
+                        <a href="#view-dashboard" class="tab-link tab-link-active">
+                            <i class="icon f7-icons if-not-md">house_fill</i>
+                            <i class="icon material-icons if-md">home</i>
+                            <span class="tabbar-label">Inicio</span>
+                        </a>
+                        <a href="#view-items" class="tab-link">
+                            <i class="icon f7-icons if-not-md">archivebox_fill</i>
+                            <i class="icon material-icons if-md">inventory_2</i>
+                            <span class="tabbar-label">Stock</span>
+                        </a>
+                        <a href="#view-history" class="tab-link">
+                            <i class="icon f7-icons if-not-md">list_bullet_indent</i>
+                            <i class="icon material-icons if-md">history</i>
+                            <span class="tabbar-label">Ledger</span>
+                        </a>
+                        <a href="#view-admin" class="tab-link">
+                            <i class="icon f7-icons if-not-md">gear_alt_fill</i>
+                            <i class="icon material-icons if-md">settings</i>
+                            <span class="tabbar-label">Config</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- FAB for Adding -->
+                <div class="fab fab-right-bottom color-green">
+                    <a href="#" class="link" id="btn-add-transaction">
+                        <i class="icon f7-icons">plus</i>
+                    </a>
+                </div>
+
+                <!-- Tabs Content -->
+                <div class="tabs">
+                    <div id="view-dashboard" class="tab tab-active page-content">
+                        <!-- Dashboard content injected here -->
+                    </div>
+                    <div id="view-items" class="tab page-content">
+                        <!-- Items content injected here -->
+                    </div>
+                    <div id="view-history" class="tab page-content">
+                        <!-- History content injected here -->
+                    </div>
+                    <div id="view-admin" class="tab page-content">
+                        <!-- Admin content injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen Popup -->
+        <div class="login-screen" id="login-screen">
+            <div class="view">
+                <div class="page">
+                    <div class="page-content login-screen-content">
+                        <div class="login-screen-title" style="color:#1c705b">Acceso Informatica</div>
+                        <div style="text-align:center; margin-bottom:2rem">
+                            <i class="f7-icons" style="font-size: 64px; color:#1c705b">lock_shield_fill</i>
+                        </div>
+                        <form id="login-form">
+                            <div class="list">
+                                <ul>
+                                    <li class="item-content item-input">
+                                        <div class="item-inner">
+                                            <div class="item-title item-label">Contraseña de Acceso</div>
+                                            <div class="item-input-wrap">
+                                                <input type="password" name="password" id="login-pass" placeholder="Contraseña Única" required>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="list">
+                                <ul>
+                                    <li>
+                                        <a href="#" class="item-link list-button login-button" id="btn-login-submit" style="background:#1c705b; color:white">ENTRAR</a>
+                                    </li>
+                                </ul>
+                                <div class="block-footer">
+                                    <p id="login-error" style="color:red; display:none">Credenciales incorrectas.</p>
+                                    <p>Uso exclusivo personal FOLP-UNLP.</p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Framework7 Library -->
+    <script src="https://cdn.jsdelivr.net/npm/framework7@8/framework7-bundle.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+
+
+</html>

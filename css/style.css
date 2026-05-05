@@ -1,0 +1,130 @@
+:root {
+  --f7-theme-color: #1c705b;
+  --f7-theme-color-rgb: 28, 112, 91;
+  --f7-theme-color-shade: #145343;
+  --f7-theme-color-tint: #248d73;
+  --f7-bars-bg-color: #1c705b;
+  --f7-bars-text-color: #ffffff;
+  --f7-list-bg-color: transparent;
+}
+
+body {
+  background-color: #f0f2f5;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+/* Navbar & Toolbar Modernization */
+.navbar-bg {
+  background: var(--f7-theme-color) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.title {
+  font-weight: 800 !important;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
+}
+
+.toolbar {
+  background: #ffffff !important;
+  border-top: 1px solid #eee;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+}
+
+.toolbar-inner {
+  padding: 0 8px;
+}
+
+.tab-link {
+  min-width: 0 !important;
+  flex: 1;
+}
+
+.tabbar-label {
+  font-weight: 600;
+  text-transform: none !important;
+  font-size: 11px !important;
+  margin-top: 2px;
+}
+
+.icon {
+  font-size: 24px !important;
+}
+
+/* Cards & Lists Style "Modernoso" */
+.card {
+  border-radius: 20px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08) !important;
+  border: none !important;
+  margin: 16px !important;
+  background: white !important;
+}
+
+.list.inset {
+  margin: 16px !important;
+}
+
+.list ul {
+  background: transparent !important;
+}
+
+.list li {
+  background: white;
+  margin-bottom: 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.item-content {
+  padding-left: 16px !important;
+  min-height: 64px !important;
+}
+
+.item-title {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+}
+
+.item-after {
+  font-weight: 800;
+}
+
+.badge {
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-weight: 800;
+  font-size: 11px;
+}
+
+/* FAB button */
+.fab a {
+  box-shadow: 0 10px 25px rgba(28, 112, 91, 0.4) !important;
+  background: #1c705b !important;
+  width: 56px;
+  height: 56px;
+}
+
+/* Login Screen */
+.login-screen-content {
+  background: #f0f2f5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-screen-title {
+  font-weight: 900;
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+}
+
+.login-button {
+  border-radius: 16px !important;
+  height: 52px !important;
+  line-height: 52px !important;
+  font-weight: 800;
+  background: #1c705b !important;
+  color: white !important;
+  margin-top: 20px;
+}
