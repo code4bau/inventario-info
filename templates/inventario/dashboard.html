@@ -36,7 +36,7 @@
                 </thead>
                 <tbody>
                     {% for tx in recent_transactions %}
-                    <tr>
+                    <tr style="cursor: pointer;" onclick="window.location='{% url 'transaction_detail' tx.id %}'">
                         <td>{{ tx.timestamp|date:"d/m/Y H:i" }}</td>
                         <td style="font-weight: 600">{{ tx.item.nombre }}</td>
                         <td>

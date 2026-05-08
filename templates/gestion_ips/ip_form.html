@@ -1,0 +1,45 @@
+{% extends 'base_ips.html' %}
+
+{% block title %}
+    {% if object %}Editar IP{% else %}Nueva IP{% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <div class="header-actions" style="margin-bottom: 2rem;">
+        <h1 style="margin: 0;">{% if object %}Editar Dirección IP{% else %}Nueva Dirección IP{% endif %}</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">
+            {% if object %}Modifica los datos de la dirección IP seleccionada.{% else %}Registra una nueva dirección IP en el sistema.{% endif %}
+        </p>
+    </div>
+
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}
+                    <small style="color: var(--text-muted); display: block; margin-top: 0.25rem;">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ error }}</div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                    <i data-lucide="save" style="margin-right: 0.5rem; width: 18px; height: 18px; vertical-align: text-bottom;"></i>
+                    {% if object %}Guardar Cambios{% else %}Registrar IP{% endif %}
+                </button>
+                <a href="{% url 'ip_list' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

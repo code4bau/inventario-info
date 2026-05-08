@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Inventario Informatica{% endblock %} | FOLP</title>
+    <title>{% block title %}Gestión de IPs{% endblock %} | FOLP</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,16 +20,16 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar">
+    <nav class="navbar" style="border-bottom: 2px solid var(--accent);">
         <div class="navbar-brand">
-            <span style="color: var(--accent)">●</span> Inventario <span style="font-weight: 300">FOLP</span>
+            <span style="color: var(--accent)">●</span> Gestión de IPs <span style="font-weight: 300">FOLP</span>
         </div>
         <div class="nav-links">
-            <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
-            <a href="{% url 'item_list' %}" class="{% if request.resolver_match.url_name == 'item_list' %}active{% endif %}">Activos</a>
-            <a href="{% url 'transaction_create' %}" class="{% if request.resolver_match.url_name == 'transaction_create' %}active{% endif %}">Movimientos</a>
-            <a href="{% url 'ip_list' %}" class="{% if request.resolver_match.url_name == 'ip_list' %}active{% endif %}">Gestión IPs</a>
-            <a href="/admin/" style="opacity: 0.6; margin-left: 1rem;">Admin</a>
+            <a href="{% url 'ip_list' %}" class="{% if request.resolver_match.url_name == 'ip_list' %}active{% endif %}">Lista de IPs</a>
+            <a href="{% url 'ip_create' %}" class="{% if request.resolver_match.url_name == 'ip_create' %}active{% endif %}">Nueva IP</a>
+            <a href="{% url 'dashboard' %}" style="opacity: 0.8; margin-left: 20px;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: text-bottom;"></i> Volver a Inventario
+            </a>
         </div>
     </nav>
 

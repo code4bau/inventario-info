@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView, TemplateView
+from django.views.generic import ListView, CreateView, TemplateView, DetailView, DeleteView
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.db.models import Count, Q
 from .models import Item, Transaction, Area, Persona
+from .forms import TransactionForm
 from django.http import HttpResponse
 from fpdf import FPDF
 from datetime import datetime
@@ -51,8 +52,8 @@ class ItemListView(ListView):
 
 class TransactionCreateView(CreateView):
     model = Transaction
+    form_class = TransactionForm
     template_name = 'inventario/transaction_form.html'
-    fields = ['item', 'tipo', 'persona', 'area', 'observaciones']
     success_url = reverse_lazy('dashboard')
 
     def form_valid(self, form):
@@ -67,6 +68,20 @@ class TransactionCreateView(CreateView):
         
         messages.success(self.request, "Movimiento registrado con éxito")
         return super().form_valid(form)
+
+class TransactionDetailView(DetailView):
+    model = Transaction
+    template_name = 'inventario/transaction_detail.html'
+    context_object_name = 'transaction'
+
+class TransactionDeleteView(DeleteView):
+    model = Transaction
+    template_name = 'inventario/transaction_confirm_delete.html'
+    success_url = reverse_lazy('dashboard')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Movimiento eliminado exitosamente.")
+        return super().delete(request, *args, **kwargs)
 
 # Mantener reporte PDF
 def generate_report(request):

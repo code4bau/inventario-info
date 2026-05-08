@@ -1,0 +1,29 @@
+{% extends 'base_ips.html' %}
+
+{% block title %}Eliminar IP{% endblock %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 2rem auto;">
+    <div class="card" style="text-align: center; padding: 3rem 2rem;">
+        <div style="width: 64px; height: 64px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+            <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+        </div>
+        
+        <h2 style="margin-top: 0; margin-bottom: 1rem;">¿Eliminar Dirección IP?</h2>
+        
+        <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
+            Estás a punto de eliminar la dirección IP <strong>{{ object.direccion_ip }}</strong>
+            {% if object.area %} asociada al área <strong>{{ object.area.nombre }}</strong>{% endif %}.
+            Esta acción no se puede deshacer.
+        </p>
+
+        <form method="post" style="display: flex; gap: 1rem; justify-content: center;">
+            {% csrf_token %}
+            <a href="{% url 'ip_list' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn" style="background: #ef4444; color: white; border: none;">
+                Sí, eliminar IP
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

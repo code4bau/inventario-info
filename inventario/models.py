@@ -50,6 +50,7 @@ class Transaction(models.Model):
     persona = models.ForeignKey(Persona, on_delete=models.PROTECT, verbose_name="Responsable")
     area = models.ForeignKey(Area, on_delete=models.PROTECT, verbose_name="Ubicación/Área")
     observaciones = models.TextField(blank=True, null=True)
+    firma = models.TextField(blank=True, null=True, verbose_name="Firma Digital")
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

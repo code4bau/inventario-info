@@ -1,0 +1,75 @@
+{% extends 'base_ips.html' %}
+{% load static %}
+
+{% block title %}Lista de IPs{% endblock %}
+
+{% block content %}
+<div class="header-actions" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1 style="margin: 0;">Gestión de Direcciones IP</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Administra las IPs asignadas a las diferentes áreas.</p>
+    </div>
+    <a href="{% url 'ip_create' %}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="plus"></i> Nueva IP
+    </a>
+</div>
+
+<div class="card" style="margin-bottom: 2rem; padding: 1rem;">
+    <form method="get" style="display: flex; gap: 1rem;">
+        <input type="text" name="q" placeholder="Buscar por IP o descripción..." class="form-control" value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-secondary">Buscar</button>
+        {% if request.GET.q %}
+            <a href="{% url 'ip_list' %}" class="btn" style="color: var(--text-muted)">Limpiar</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+    <table class="table" style="width: 100%; border-collapse: collapse;">
+        <thead style="background: var(--bg-color);">
+            <tr>
+                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color);">Dirección IP</th>
+                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color);">Área Asignada</th>
+                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color);">Estado</th>
+                <th style="padding: 1rem; text-align: left; border-bottom: 1px solid var(--border-color);">Descripción</th>
+                <th style="padding: 1rem; text-align: right; border-bottom: 1px solid var(--border-color);">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ip in ips %}
+            <tr style="border-bottom: 1px solid var(--border-color); transition: background 0.2s;">
+                <td style="padding: 1rem;"><strong>{{ ip.direccion_ip }}</strong></td>
+                <td style="padding: 1rem;">{{ ip.area.nombre|default:"Sin área" }}</td>
+                <td style="padding: 1rem;">
+                    {% if ip.estado == 'ACTIVA' %}
+                        <span style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">Activa</span>
+                    {% elif ip.estado == 'INACTIVA' %}
+                        <span style="background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">Inactiva</span>
+                    {% else %}
+                        <span style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; font-weight: 500;">Reservada</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 1rem; color: var(--text-muted);">{{ ip.descripcion|default:"-" }}</td>
+                <td style="padding: 1rem; text-align: right;">
+                    <a href="{% url 'ip_ping' ip.pk %}" class="btn" style="padding: 0.5rem; background: rgba(16, 185, 129, 0.1); color: #10b981; margin-right: 0.5rem;" title="Ping (Cambiar Estado)">
+                        <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
+                    </a>
+                    <a href="{% url 'ip_update' ip.pk %}" class="btn" style="padding: 0.5rem; background: rgba(59, 130, 246, 0.1); color: #3b82f6;">
+                        <i data-lucide="edit-2" style="width: 16px; height: 16px;"></i>
+                    </a>
+                    <a href="{% url 'ip_delete' ip.pk %}" class="btn" style="padding: 0.5rem; background: rgba(239, 68, 68, 0.1); color: #ef4444; margin-left: 0.5rem;">
+                        <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                    No se encontraron direcciones IP.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
