@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto;">
+    <h1 style="margin-bottom: 2rem;">Registrar Movimiento</h1>
+    
+    <div class="card">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <p style="color: var(--accent); font-size: 0.8rem; margin-top: 0.25rem;">{{ field.errors.0 }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div class="flex-group" style="margin-top: 2rem;">
+                <button type="submit" class="btn btn-primary">
+                    Confirmar Registro
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn" style="background: #f1f5f9; color: var(--text);">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Pre-seleccionar item si viene en la URL
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('item');
+        if (itemId) {
+            const select = document.getElementById('id_item');
+            if (select) select.value = itemId;
+        }
+    });
+</script>
+{% endblock %}

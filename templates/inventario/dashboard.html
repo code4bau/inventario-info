@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="stats-grid">
+    <div class="card">
+        <div class="stat-label">Total Activos</div>
+        <div class="stat-value">{{ total_items }}</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted)">Equipos registrados</p>
+    </div>
+    <div class="card">
+        <div class="stat-label">Stock Crítico</div>
+        <div class="stat-value" style="color: {% if critical_items > 0 %}var(--accent){% else %}var(--primary){% endif %}">
+            {{ critical_items }}
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted)">Equipos sin stock</p>
+    </div>
+    <div class="card">
+        <div class="stat-label">Áreas / Ubicaciones</div>
+        <div class="stat-value">{{ total_areas }}</div>
+        <p style="font-size: 0.8rem; color: var(--text-muted)">Dependencias registradas</p>
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <div class="flex-main">
+        <h2 style="margin-bottom: 1.5rem;">Última Actividad</h2>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Ítem</th>
+                        <th>Tipo</th>
+                        <th>Responsable</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in recent_transactions %}
+                    <tr>
+                        <td>{{ tx.timestamp|date:"d/m/Y H:i" }}</td>
+                        <td style="font-weight: 600">{{ tx.item.nombre }}</td>
+                        <td>
+                            <span class="badge {% if tx.tipo == 'ENTRADA' %}badge-success{% else %}badge-danger{% endif %}">
+                                {{ tx.tipo }}
+                            </span>
+                        </td>
+                        <td>{{ tx.persona.nombre_completo }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted)">No hay movimientos recientes</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="flex-side">
+        <h2 style="margin-bottom: 1.5rem;">Acciones Rápidas</h2>
+        <div class="card">
+            <a href="{% url 'transaction_create' %}" class="btn btn-primary" style="margin-bottom: 1rem;">
+                <i data-lucide="plus-circle"></i> Nuevo Movimiento
+            </a>
+            <a href="{% url 'generate_report' %}" class="btn" style="border: 1px solid var(--primary); color: var(--primary);">
+                <i data-lucide="download"></i> Descargar PDF
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

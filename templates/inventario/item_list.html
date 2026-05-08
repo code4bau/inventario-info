@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Activos del Sistema</h1>
+    <form method="get" style="display: flex; gap: 0.5rem;">
+        <input type="text" name="q" placeholder="Buscar..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-primary">
+            <i data-lucide="search"></i>
+        </button>
+    </form>
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Código Patrimonial</th>
+                <th>Categoría</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td style="font-weight: 600">{{ item.nombre }}</td>
+                <td><code style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">{{ item.codigo_patrimonial }}</code></td>
+                <td>{{ item.categoria }}</td>
+                <td>
+                    <a href="{% url 'transaction_create' %}?item={{ item.id }}" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.8rem;">
+                        REGISTRAR MOVIMIENTO
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-muted)">No se encontraron activos</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Inventario Informatica{% endblock %} | FOLP</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons (Lucide) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Custom CSS -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span style="color: var(--accent)">●</span> Inventario <span style="font-weight: 300">FOLP</span>
+        </div>
+        <div class="nav-links">
+            <a href="{% url 'dashboard' %}" class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+            <a href="{% url 'item_list' %}" class="{% if request.resolver_match.url_name == 'item_list' %}active{% endif %}">Activos</a>
+            <a href="{% url 'transaction_create' %}" class="{% if request.resolver_match.url_name == 'transaction_create' %}active{% endif %}">Movimientos</a>
+            <a href="/admin/" style="opacity: 0.6">Admin</a>
+        </div>
+    </nav>
+
+    <main class="container animate-fade">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="card" style="margin-bottom: 1rem; border-left: 4px solid var(--primary)">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
