@@ -13,6 +13,9 @@
             <a href="{% url 'dashboard' %}" class="btn btn-secondary" style="margin-right: 0.5rem; background: var(--bg); border: 1px solid var(--border);">
                 <i data-lucide="arrow-left" style="width: 18px; height: 18px;"></i> Volver
             </a>
+            <a href="{% url 'transaction_pdf' transaction.id %}" class="btn btn-primary" style="margin-right: 0.5rem;">
+                <i data-lucide="download" style="width: 18px; height: 18px;"></i> Descargar PDF
+            </a>
             <a href="{% url 'transaction_delete' transaction.id %}" class="btn" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none;">
                 <i data-lucide="trash-2" style="width: 18px; height: 18px;"></i> Eliminar Movimiento
             </a>
@@ -56,6 +59,18 @@
                     <div style="font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <i data-lucide="map-pin" style="width: 16px; height: 16px; color: var(--primary);"></i>
                         {{ transaction.area.nombre }}
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">IP Asignada al Activo</div>
+                    <div style="font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="globe" style="width: 16px; height: 16px; color: var(--primary);"></i>
+                        {% if transaction.item.ip_asignada %}
+                            {{ transaction.item.ip_asignada.direccion_ip }}
+                        {% else %}
+                            <span style="color: var(--text-muted); font-size: 0.9rem;">Sin IP</span>
+                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -23,15 +23,19 @@ class Persona(models.Model):
 
 class Item(models.Model):
     CATEGORIES = [
-        ('Hardware', 'Hardware'),
-        ('Periférico', 'Periférico'),
+        ('PC', 'PC'),
+        ('Impresora', 'Impresora'),
+        ('Notebook', 'Notebook'),
         ('Redes', 'Redes'),
+        ('Paginas', 'Paginas web'),
         ('Otro', 'Otro'),
     ]
     nombre = models.CharField(max_length=200)
     codigo_patrimonial = models.CharField(max_length=100, unique=True)
     categoria = models.CharField(max_length=50, choices=CATEGORIES, default='Hardware')
     descripcion = models.TextField(blank=True, null=True)
+    responsable = models.ForeignKey(Persona, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Responsable")
+    area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Área")
 
     def __str__(self):
         return f"{self.nombre} ({self.codigo_patrimonial})"

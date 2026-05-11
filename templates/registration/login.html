@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block extra_css %}
+<style>
+    .navbar { display: none; }
+    body { background: var(--primary); display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .container { max-width: 400px; margin: 0; }
+    .login-card { background: white; padding: 2.5rem; border-radius: var(--radius); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2); text-align: center; }
+    .login-logo { margin-bottom: 1.5rem; filter: brightness(0) saturate(100%) invert(35%) sepia(21%) saturate(1313%) hue-rotate(118deg) brightness(91%) contrast(85%); } /* Color primary */
+    h2 { color: var(--text); margin-bottom: 0.5rem; font-weight: 700; }
+    p { color: var(--text-muted); margin-bottom: 2rem; font-size: 0.9rem; }
+    .form-group { text-align: left; margin-bottom: 1.5rem; }
+    .login-btn { width: 100%; padding: 1rem; margin-top: 1rem; font-size: 1rem; }
+    .error-msg { background: #fee2e2; color: #991b1b; padding: 0.75rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 500; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-card animate-fade">
+    <img src="/static/img/logoPestaña.png" alt="Logo FOLP" class="login-logo" width="60">
+    <h2>Bienvenido</h2>
+    <p>Ingresa tus credenciales para acceder al sistema de inventario.</p>
+
+    {% if form.errors %}
+    <div class="error-msg">
+        Usuario o contraseña incorrectos. Por favor intenta de nuevo.
+    </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="id_username">Usuario</label>
+            <input type="text" name="username" id="id_username" placeholder="Tu usuario" required>
+        </div>
+        <div class="form-group">
+            <label for="id_password">Contraseña</label>
+            <input type="password" name="password" id="id_password" placeholder="••••••••" required>
+        </div>
+        
+        <button type="submit" class="btn btn-primary login-btn">
+            Iniciar Sesión
+        </button>
+    </form>
+    
+    <div style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+        <span style="font-size: 0.8rem; color: var(--text-muted);">Facultad de Odontología - UNLP</span>
+    </div>
+</div>
+{% endblock %}

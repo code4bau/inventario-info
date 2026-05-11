@@ -13,8 +13,8 @@ class PersonaAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'codigo_patrimonial', 'categoria', 'get_stock')
-    list_filter = ('categoria',)
+    list_display = ('nombre', 'codigo_patrimonial', 'categoria', 'responsable', 'area', 'get_ip', 'get_stock')
+    list_filter = ('categoria', 'area', 'responsable')
     search_fields = ('nombre', 'codigo_patrimonial')
 
     def get_stock(self, obj):
@@ -23,6 +23,10 @@ class ItemAdmin(admin.ModelAdmin):
         salidas = obj.transactions.filter(tipo='SALIDA').count()
         return entradas - salidas
     get_stock.short_description = 'Stock Actual'
+
+    def get_ip(self, obj):
+        return obj.ip_asignada.direccion_ip if hasattr(obj, 'ip_asignada') and obj.ip_asignada else '-'
+    get_ip.short_description = 'IP Asignada'
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):

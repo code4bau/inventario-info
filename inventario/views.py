@@ -1,15 +1,17 @@
-from django.shortcuts import render, redirect
-from django.views.generic import ListView, CreateView, TemplateView, DetailView, DeleteView
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import ListView, CreateView, TemplateView, DetailView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from .models import Item, Transaction, Area, Persona
-from .forms import TransactionForm
+from .forms import TransactionForm, ItemForm
 from django.http import HttpResponse
 from fpdf import FPDF
 from datetime import datetime
 
-class DashboardView(TemplateView):
+class DashboardView(LoginRequiredMixin, TemplateView):
     template_name = 'inventario/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -18,23 +20,31 @@ class DashboardView(TemplateView):
         
         # Calcular stocks
         total_items = items.count()
-        critical_items = 0
+        equipos_disponibles = 0
+        equipos_en_uso = 0
+        equipos_con_ip = 0
         
-        inventory_status = []
         for item in items:
             entradas = item.transactions.filter(tipo='ENTRADA').count()
             salidas = item.transactions.filter(tipo='SALIDA').count()
             stock = entradas - salidas
-            if stock <= 0:
-                critical_items += 1
+            if stock > 0:
+                equipos_disponibles += 1
+            else:
+                equipos_en_uso += 1
+                
+            if hasattr(item, 'ip_asignada') and item.ip_asignada:
+                equipos_con_ip += 1
         
         context['total_items'] = total_items
-        context['critical_items'] = critical_items
+        context['equipos_disponibles'] = equipos_disponibles
+        context['equipos_en_uso'] = equipos_en_uso
+        context['equipos_con_ip'] = equipos_con_ip
         context['recent_transactions'] = Transaction.objects.all()[:10]
         context['total_areas'] = Area.objects.count()
         return context
 
-class ItemListView(ListView):
+class ItemListView(LoginRequiredMixin, ListView):
     model = Item
     template_name = 'inventario/item_list.html'
     context_object_name = 'items'
@@ -50,7 +60,36 @@ class ItemListView(ListView):
             )
         return queryset
 
-class TransactionCreateView(CreateView):
+class ItemCreateView(LoginRequiredMixin, CreateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'inventario/item_form.html'
+    success_url = reverse_lazy('item_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Activo registrado exitosamente.")
+        return super().form_valid(form)
+
+class ItemUpdateView(LoginRequiredMixin, UpdateView):
+    model = Item
+    form_class = ItemForm
+    template_name = 'inventario/item_form.html'
+    success_url = reverse_lazy('item_list')
+
+    def form_valid(self, form):
+        messages.success(self.request, "Activo actualizado exitosamente.")
+        return super().form_valid(form)
+
+class ItemDeleteView(LoginRequiredMixin, DeleteView):
+    model = Item
+    template_name = 'inventario/item_confirm_delete.html'
+    success_url = reverse_lazy('item_list')
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, "Activo eliminado exitosamente.")
+        return super().delete(request, *args, **kwargs)
+
+class TransactionCreateView(LoginRequiredMixin, CreateView):
     model = Transaction
     form_class = TransactionForm
     template_name = 'inventario/transaction_form.html'
@@ -66,15 +105,21 @@ class TransactionCreateView(CreateView):
                 messages.error(self.request, f"Error: No hay stock disponible para {item.nombre}")
                 return self.form_invalid(form)
         
+        # Sincronizar área y responsable del Activo con el último movimiento
+        item = form.cleaned_data['item']
+        item.area = form.cleaned_data['area']
+        item.responsable = form.cleaned_data['persona']
+        item.save()
+        
         messages.success(self.request, "Movimiento registrado con éxito")
         return super().form_valid(form)
 
-class TransactionDetailView(DetailView):
+class TransactionDetailView(LoginRequiredMixin, DetailView):
     model = Transaction
     template_name = 'inventario/transaction_detail.html'
     context_object_name = 'transaction'
 
-class TransactionDeleteView(DeleteView):
+class TransactionDeleteView(LoginRequiredMixin, DeleteView):
     model = Transaction
     template_name = 'inventario/transaction_confirm_delete.html'
     success_url = reverse_lazy('dashboard')
@@ -84,6 +129,7 @@ class TransactionDeleteView(DeleteView):
         return super().delete(request, *args, **kwargs)
 
 # Mantener reporte PDF
+@login_required
 def generate_report(request):
     items = Item.objects.all()
     inventory = []
@@ -103,7 +149,8 @@ def generate_report(request):
             'last_tipo': last_tx.get_tipo_display() if last_tx else '-',
             'last_persona': last_tx.persona.nombre_completo if last_tx else '-',
             'last_area': last_tx.area.nombre if last_tx else '-',
-            'last_fecha': last_tx.timestamp.strftime('%d/%m/%Y %H:%M') if last_tx else '-'
+            'last_fecha': last_tx.timestamp.strftime('%d/%m/%Y %H:%M') if last_tx else '-',
+            'ip_asignada': item.ip_asignada.direccion_ip if hasattr(item, 'ip_asignada') and item.ip_asignada else '-'
         })
 
     pdf = FPDF(orientation='L')
@@ -118,31 +165,75 @@ def generate_report(request):
     # Encabezados - Total ancho: 277mm (A4 Landscape con márgenes)
     pdf.set_fill_color(28, 112, 91)
     pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 9)
-    pdf.cell(60, 10, clean(" Item / Activo"), border=1, fill=True)
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.cell(50, 10, clean(" Item / Activo"), border=1, fill=True)
     pdf.cell(30, 10, clean(" Código"), border=1, fill=True)
-    pdf.cell(30, 10, clean(" Categoría"), border=1, fill=True)
+    pdf.cell(25, 10, clean(" Categoría"), border=1, fill=True)
     pdf.cell(15, 10, clean(" Stock"), border=1, fill=True, align="C")
-    pdf.cell(25, 10, clean(" Mov."), border=1, fill=True, align="C")
-    pdf.cell(50, 10, clean(" Responsable"), border=1, fill=True)
-    pdf.cell(40, 10, clean(" Área/Ubicación"), border=1, fill=True)
+    pdf.cell(20, 10, clean(" Mov."), border=1, fill=True, align="C")
+    pdf.cell(45, 10, clean(" Responsable"), border=1, fill=True)
+    pdf.cell(35, 10, clean(" Área/Ubicación"), border=1, fill=True)
+    pdf.cell(30, 10, clean(" IP Asignada"), border=1, fill=True)
     pdf.cell(27, 10, clean(" Fecha/Hora"), border=1, fill=True, align="C")
     pdf.ln()
     
     # Filas
     pdf.set_text_color(0, 0, 0)
-    pdf.set_font("Helvetica", "", 8)
+    pdf.set_font("Helvetica", "", 7)
     for i in inventory:
-        pdf.cell(60, 8, clean(f" {i['nombre']}"), border=1)
+        pdf.cell(50, 8, clean(f" {i['nombre']}"), border=1)
         pdf.cell(30, 8, clean(f" {i['codigo']}"), border=1)
-        pdf.cell(30, 8, clean(f" {i['categoria']}"), border=1)
+        pdf.cell(25, 8, clean(f" {i['categoria']}"), border=1)
         pdf.cell(15, 8, clean(f"{i['stock']}"), border=1, align="C")
-        pdf.cell(25, 8, clean(f" {i['last_tipo']}"), border=1, align="C")
-        pdf.cell(50, 8, clean(f" {i['last_persona']}"), border=1)
-        pdf.cell(40, 8, clean(f" {i['last_area']}"), border=1)
+        pdf.cell(20, 8, clean(f" {i['last_tipo']}"), border=1, align="C")
+        pdf.cell(45, 8, clean(f" {i['last_persona']}"), border=1)
+        pdf.cell(35, 8, clean(f" {i['last_area']}"), border=1)
+        pdf.cell(30, 8, clean(f" {i['ip_asignada']}"), border=1)
         pdf.cell(27, 8, clean(f"{i['last_fecha']}"), border=1, align="C")
         pdf.ln()
     
     response = HttpResponse(bytes(pdf.output()), content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename="reporte_inventario.pdf"'
+    return response
+
+@login_required
+def transaction_pdf(request, pk):
+    transaction = get_object_or_404(Transaction, pk=pk)
+    pdf = FPDF()
+    pdf.add_page()
+    def clean(txt): return str(txt).encode('latin-1', 'replace').decode('latin-1')
+    
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, clean("Detalle de Movimiento de Inventario"), ln=True, align="C")
+    pdf.ln(5)
+    
+    pdf.set_font("Helvetica", "", 12)
+    pdf.cell(0, 8, clean(f"Fecha y Hora: {transaction.timestamp.strftime('%d/%m/%Y %H:%M')}"), ln=True)
+    pdf.cell(0, 8, clean(f"Tipo de Movimiento: {transaction.get_tipo_display()}"), ln=True)
+    pdf.ln(5)
+    
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, clean("Datos del Activo"), ln=True)
+    pdf.set_font("Helvetica", "", 12)
+    pdf.cell(0, 8, clean(f"Nombre: {transaction.item.nombre}"), ln=True)
+    pdf.cell(0, 8, clean(f"Código Patrimonial: {transaction.item.codigo_patrimonial}"), ln=True)
+    pdf.cell(0, 8, clean(f"Categoría: {transaction.item.categoria}"), ln=True)
+    ip_asignada = transaction.item.ip_asignada.direccion_ip if hasattr(transaction.item, 'ip_asignada') and transaction.item.ip_asignada else 'Sin IP'
+    pdf.cell(0, 8, clean(f"IP Asignada: {ip_asignada}"), ln=True)
+    pdf.ln(5)
+    
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, clean("Asignación"), ln=True)
+    pdf.set_font("Helvetica", "", 12)
+    pdf.cell(0, 8, clean(f"Responsable: {transaction.persona.nombre_completo}"), ln=True)
+    pdf.cell(0, 8, clean(f"Área/Ubicación: {transaction.area.nombre}"), ln=True)
+    pdf.ln(5)
+    
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.cell(0, 10, clean("Observaciones"), ln=True)
+    pdf.set_font("Helvetica", "", 12)
+    pdf.multi_cell(0, 8, clean(transaction.observaciones or "Sin observaciones registradas."))
+    
+    response = HttpResponse(bytes(pdf.output()), content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="movimiento_{transaction.id}.pdf"'
     return response

@@ -1,5 +1,5 @@
 from django.db import models
-from inventario.models import Area
+from inventario.models import Area, Item
 
 class DireccionIP(models.Model):
     ESTADOS = [
@@ -10,6 +10,7 @@ class DireccionIP(models.Model):
     
     direccion_ip = models.GenericIPAddressField(unique=True, verbose_name="Dirección IP")
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Área Asignada", related_name="ips")
+    dispositivo = models.OneToOneField(Item, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Dispositivo / Máquina Asignada", related_name="ip_asignada")
     descripcion = models.CharField(max_length=200, blank=True, null=True, verbose_name="Descripción / Equipo")
     estado = models.CharField(max_length=20, choices=ESTADOS, default='ACTIVA', verbose_name="Estado")
     fecha_actualizacion = models.DateTimeField(auto_now=True, verbose_name="Última actualización")

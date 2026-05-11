@@ -49,18 +49,105 @@ body {
 .nav-links {
     display: flex;
     gap: 1.5rem;
+    align-items: center;
 }
 
-.nav-links a {
+.nav-links a, .nav-links button {
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 500;
     transition: color 0.2s;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
 }
 
-.nav-links a:hover, .nav-links a.active {
+.nav-links a:hover, .nav-links a.active, .nav-links button:hover {
     color: white;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.1) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    transition: background 0.2s !important;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* User Dropdown Menu */
+.user-menu {
+    position: relative;
+    display: inline-block;
+    margin-left: 1rem;
+}
+
+.user-menu-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 38px;
+    height: 38px;
+    justify-content: center;
+}
+
+.user-menu-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 0.5rem;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    z-index: 1001;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.dropdown-content a, .dropdown-content button {
+    color: var(--text) !important;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    text-align: left;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.dropdown-content a:hover, .dropdown-content button:hover {
+    background-color: #f1f5f9;
+}
+
+.dropdown-content.show {
+    display: block;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background-color: var(--border);
+    margin: 0;
 }
 
 /* Layout Containers */
@@ -87,9 +174,11 @@ body {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
 }
 
 .stat-label {
@@ -189,11 +278,18 @@ label {
 
 input, select, textarea {
     width: 100%;
+    max-width: 100%;
     padding: 0.75rem;
     border-radius: 8px;
     border: 1px solid var(--border);
     font-family: inherit;
     font-size: 1rem;
+}
+
+select {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 input:focus {
@@ -292,9 +388,15 @@ input:focus {
         font-size: 0.85rem;
     }
 
-    .btn {
+    .btn:not(.btn-icon) {
         width: 100%;
         padding: 0.875rem;
+    }
+    
+    table .btn {
+        width: auto !important;
+        padding: 0.5rem !important;
+        margin-bottom: 0.25rem;
     }
 
     /* Mejora de espaciado en tarjetas para movil */
@@ -306,7 +408,7 @@ input:focus {
 /* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: none; }
 }
 
 .animate-fade {

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Eliminar Activo{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; margin-top: 2rem;">
+    <div class="card" style="padding: 2rem; text-align: center;">
+        <div style="width: 64px; height: 64px; background: rgba(239, 68, 68, 0.1); color: #ef4444; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+            <i data-lucide="alert-triangle" style="width: 32px; height: 32px;"></i>
+        </div>
+        
+        <h1 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text);">¿Eliminar Activo?</h1>
+        <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6;">
+            Estás a punto de eliminar el activo <strong>"{{ object.nombre }}" ({{ object.codigo_patrimonial }})</strong>.
+            <br><br>
+            <span style="color: #ef4444; font-weight: 500;">Esta acción no se puede deshacer y eliminará también todos los movimientos asociados a este activo.</span>
+        </p>
+
+        <form method="post" style="display: flex; gap: 1rem; justify-content: center;">
+            {% csrf_token %}
+            <a href="{% url 'item_list' %}" class="btn btn-secondary" style="flex: 1; max-width: 200px;">
+                Cancelar
+            </a>
+            <button type="submit" class="btn" style="flex: 1; max-width: 200px; background: #ef4444; color: white; border: none;">
+                Sí, eliminar activo
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
