@@ -27,7 +27,6 @@ class Item(models.Model):
         ('Impresora', 'Impresora'),
         ('Notebook', 'Notebook'),
         ('Redes', 'Redes'),
-        ('Paginas', 'Paginas web'),
         ('Otro', 'Otro'),
     ]
     nombre = models.CharField(max_length=200)

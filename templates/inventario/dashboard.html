@@ -63,6 +63,9 @@
     <div class="flex-side">
         <h2 style="margin-bottom: 1.5rem;">Acciones Rápidas</h2>
         <div class="card">
+            <a href="{% url 'item_create' %}" class="btn" style="margin-bottom: 1rem; border: 1px solid var(--accent); color: var(--accent);">
+                <i data-lucide="package-plus"></i> Nuevo Ítem
+            </a>
             <a href="{% url 'transaction_create' %}" class="btn btn-primary" style="margin-bottom: 1rem;">
                 <i data-lucide="plus-circle"></i> Nuevo Movimiento
             </a>
