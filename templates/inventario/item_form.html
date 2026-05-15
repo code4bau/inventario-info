@@ -20,7 +20,7 @@
             {% csrf_token %}
             
             {% for field in form %}
-            <div style="margin-bottom: 1.5rem;">
+            <div id="div_id_{{ field.name }}" style="margin-bottom: 1.5rem; {% if field.name == 'responsable_otro' %}display: none;{% endif %}">
                 <label for="{{ field.id_for_label }}" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">
                     {{ field.label }}
                 </label>
@@ -44,4 +44,30 @@
         </form>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const responsableSelect = document.getElementById('id_responsable');
+        const divResponsableOtro = document.getElementById('div_id_responsable_otro');
+        const inputResponsableOtro = document.getElementById('id_responsable_otro');
+
+        function toggleResponsableOtro() {
+            if (responsableSelect.value === "") {
+                divResponsableOtro.style.display = 'block';
+                inputResponsableOtro.required = true;
+            } else {
+                divResponsableOtro.style.display = 'none';
+                inputResponsableOtro.required = false;
+                inputResponsableOtro.value = '';
+            }
+        }
+
+        if (responsableSelect) {
+            responsableSelect.addEventListener('change', toggleResponsableOtro);
+            toggleResponsableOtro();
+        }
+    });
+</script>
 {% endblock %}

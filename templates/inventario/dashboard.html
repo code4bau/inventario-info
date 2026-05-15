@@ -47,7 +47,13 @@
                                 {{ tx.tipo }}
                             </span>
                         </td>
-                        <td>{{ tx.persona.nombre_completo }}</td>
+                        <td>
+                            {% if tx.persona %}
+                                {{ tx.persona.nombre_completo }}
+                            {% else %}
+                                {{ tx.responsable_otro|default:"-" }}
+                            {% endif %}
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>

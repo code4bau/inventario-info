@@ -9,7 +9,7 @@
             {% csrf_token %}
             
             {% for field in form %}
-            <div class="form-group">
+            <div class="form-group" {% if field.name == 'responsable_otro' %}id="div_id_responsable_otro" style="display: none;"{% endif %}>
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 {{ field }}
                 {% if field.errors %}
@@ -113,6 +113,27 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             firmaInput.value = '';
         });
+
+        // 3. Toggle Responsable Otro
+        const personaSelect = document.getElementById('id_persona');
+        const divResponsableOtro = document.getElementById('div_id_responsable_otro');
+        const inputResponsableOtro = document.getElementById('id_responsable_otro');
+
+        function toggleResponsableOtro() {
+            if (personaSelect.value === "") {
+                divResponsableOtro.style.display = 'block';
+                inputResponsableOtro.required = true;
+            } else {
+                divResponsableOtro.style.display = 'none';
+                inputResponsableOtro.required = false;
+                inputResponsableOtro.value = '';
+            }
+        }
+
+        if (personaSelect) {
+            personaSelect.addEventListener('change', toggleResponsableOtro);
+            toggleResponsableOtro(); // Run on load
+        }
 
         form.addEventListener('submit', (e) => {
             // Solo guardar si el canvas no está vacío

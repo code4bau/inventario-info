@@ -30,14 +30,14 @@ class Item(models.Model):
         ('Otro', 'Otro'),
     ]
     nombre = models.CharField(max_length=200)
-    codigo_patrimonial = models.CharField(max_length=100, unique=True)
     categoria = models.CharField(max_length=50, choices=CATEGORIES, default='Hardware')
     descripcion = models.TextField(blank=True, null=True)
     responsable = models.ForeignKey(Persona, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Responsable")
+    responsable_otro = models.CharField(max_length=200, blank=True, null=True, verbose_name="Nombre de responsable (Otro)")
     area = models.ForeignKey(Area, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Área")
 
     def __str__(self):
-        return f"{self.nombre} ({self.codigo_patrimonial})"
+        return self.nombre
 
     class Meta:
         verbose_name = "Ítem"
@@ -50,7 +50,8 @@ class Transaction(models.Model):
     ]
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='transactions')
     tipo = models.CharField(max_length=10, choices=TYPES, verbose_name="Tipo de Movimiento")
-    persona = models.ForeignKey(Persona, on_delete=models.PROTECT, verbose_name="Responsable")
+    persona = models.ForeignKey(Persona, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Responsable")
+    responsable_otro = models.CharField(max_length=200, blank=True, null=True, verbose_name="Nombre de responsable (Otro)")
     area = models.ForeignKey(Area, on_delete=models.PROTECT, verbose_name="Ubicación/Área")
     observaciones = models.TextField(blank=True, null=True)
     firma = models.TextField(blank=True, null=True, verbose_name="Firma Digital")

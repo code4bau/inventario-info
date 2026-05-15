@@ -13,9 +13,9 @@ class PersonaAdmin(admin.ModelAdmin):
 
 @admin.register(Item)
 class ItemAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'codigo_patrimonial', 'categoria', 'responsable', 'area', 'get_ip', 'get_stock')
+    list_display = ('nombre', 'categoria', 'responsable', 'area', 'get_ip', 'get_stock')
     list_filter = ('categoria', 'area', 'responsable')
-    search_fields = ('nombre', 'codigo_patrimonial')
+    search_fields = ('nombre',)
 
     def get_stock(self, obj):
         # Cálculo simple de stock
@@ -30,7 +30,7 @@ class ItemAdmin(admin.ModelAdmin):
 
 @admin.register(Transaction)
 class TransactionAdmin(admin.ModelAdmin):
-    list_display = ('timestamp', 'item', 'tipo', 'persona', 'area')
+    list_display = ('timestamp', 'item', 'tipo', 'persona', 'responsable_otro', 'area')
     list_filter = ('tipo', 'area', 'timestamp')
-    search_fields = ('item__nombre', 'persona__nombre_completo', 'observaciones')
+    search_fields = ('item__nombre', 'persona__nombre_completo', 'responsable_otro', 'observaciones')
     date_hierarchy = 'timestamp'

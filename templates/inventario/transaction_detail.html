@@ -27,7 +27,6 @@
             <div>
                 <h2 style="margin: 0 0 0.5rem 0; font-size: 1.5rem; color: var(--text);">{{ transaction.item.nombre }}</h2>
                 <div style="color: var(--text-muted); display: flex; gap: 1rem; font-size: 0.9rem;">
-                    <span><i data-lucide="barcode" style="width: 14px; height: 14px; vertical-align: middle;"></i> {{ transaction.item.codigo_patrimonial }}</span>
                     <span><i data-lucide="tag" style="width: 14px; height: 14px; vertical-align: middle;"></i> {{ transaction.item.categoria }}</span>
                 </div>
             </div>
@@ -49,8 +48,12 @@
                     <div style="font-size: 0.85rem; color: var(--text-muted);">Responsable</div>
                     <div style="font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem;">
                         <i data-lucide="user" style="width: 16px; height: 16px; color: var(--primary);"></i>
-                        {{ transaction.persona.nombre_completo }}
-                        {% if transaction.persona.rol %}<span style="font-weight: 400; font-size: 0.9rem; color: var(--text-muted);">({{ transaction.persona.rol }})</span>{% endif %}
+                        {% if transaction.persona %}
+                            {{ transaction.persona.nombre_completo }}
+                            {% if transaction.persona.rol %}<span style="font-weight: 400; font-size: 0.9rem; color: var(--text-muted);">({{ transaction.persona.rol }})</span>{% endif %}
+                        {% else %}
+                            {{ transaction.responsable_otro|default:"-" }}
+                        {% endif %}
                     </div>
                 </div>
 
